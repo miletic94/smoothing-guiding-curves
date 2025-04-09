@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smoothing guiding curves for road mesh extrusion</title>
+</head>
+
+<body>
+    <h2>Smoothing guiding curves for road mesh extrusion</h2>
+    <p>
+        While building traffic management game I've encountered interesting problem. I need to allow players to build
+        curvy roads. This building should feel seamless for players, so they can concentrate on strategy, planning and
+        management, not on where to place spline control points so that the road looks good. So let's automate some
+        curves
+    </p>
+    <p>
+        For the prototype, I decided to use some kind of mesh extruder that follows the spline path.</p>
+    <p>Okay problem solved!</p>
+    <p>
+        Well... this is what mesh extruder gives out of the box
+    </p>
+    <div>
+        <img src="./smooth-curves/out-of-box.PNG">
+        <img src="./smooth-curves/out-of-box-triangles.PNG">
+    </div>
+    <p>
+        Not pretty. Curve is jagged and mesh is self-intersecting. Of course, mesh extruder just follows the path. We
+        need to find the way to make that path curvy.
+    </p>
+    <p>
+        It's not that hard to realize that instead of having one pivot point that stands on the place where our line
+        takes turn, we should have two points and form Bezier curve between them. But...
+    </p>
+    <div>
+        <img src="./smooth-curves/before.PNG">
+        <img src="./smooth-curves/before-triangles.PNG">
+    </div>
+    <p>
+        But where to put starting and ending point and control points? Further more, we need to make game follow
+        player's mouse clicking and movement and our curve needs to automatically adjust based on that.
+    </p>
+    <p>
+        We need to come up with algorithm capable of doing that. At this time we realize that our solution is going to
+        require some math. Geometry, trigonometry, linear algebra, parametric functions... might sound scary for some,
+        but for us! We nerds get excited when problems like this arise before us.
+    </p>
+    <p>
+        Because it's time to open GeoGebra and start looking for patterns!
+    </p>
+    <div>
+        <img src="./smooth-curves/gg-1.PNG">
+    </div>
+    <p>
+        We set up our problem in GeoGebra. Note that we set up slider for the angle from B to C, so later we can test
+        how our solution will look when we change that angle.
+    </p>
+    <p>
+        Now if segment that we're looking at is going to be our guide line for a mesh, we know that mesh triangles are
+        going to form on both sides of it. For the purpose of our problem, we can simplify that and imagine two
+        rectangles formed around those segments:
+    </p>
+    <div>
+        <img src="./smooth-curves/gg-2.PNG">
+    </div>
+    <p>
+        We take that 'w' is width of the road so it's going to be width of our rectangles as well. To form rectangles we
+        will look for unit vectors that point out in the direction of segments and find vectors perpendicular to them.
+        Perpendicular vectors can be found by applying rotation matrix, or by switching x and y and then making new
+        formed x negative.
+        <i>TBD: Show math</i>
+    </p>
+    <p>
+        It's obvious that our rectangles are intersecting. But let's take a closer rook to the point of that
+        intersection. We cab take it as a center of circular arc that touches both of our segments. In that way we would
+        make a curve.
+    </p>
+    <div>
+        <img src="./smooth-curves/gg-3.PNG">
+    </div>
+    <p>
+        At this point it's interesting to show how that would look in our game engine if we had everything calculated.
+        We will see how to calculate everything later, but for now let's just check how will our mesh look with a curve
+        like this
+    </p>
+    <div>
+        <img src="./smooth-curves/gdt-1.PNG">
+        <div>
+            <p>
+                Nice! Mesh now follows pretty smooth curve, which is promising. But now it self-intersects. This is why,
+                instead of using rectangle intersection point as our arc center, we will add some length to it. When we
+                finish our calculations we can experiment with that length, or we can even allow player to manipulate it
+                to make curve longer or shorter. Exciting!
+            <p>
+            <p>
+                But wait... how do we calculate where the intersection will happen? How do we find where it will touch
+                segments? And the most important question, how do we make circular arc out of splines?
+            </p>
+</body>
+
+</html>
