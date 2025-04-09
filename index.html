@@ -86,91 +86,219 @@
     </p>
     <div>
         <img src="./smooth-curves/gdt-1.PNG">
-        <div>
-            <p>
-                Nice! Mesh now follows pretty smooth curve, which is promising. But now it self-intersects. This is why,
-                instead of using rectangle intersection point as our arc center, we will add some length to it. When we
-                finish our calculations we can experiment with that length, or we can even allow player to manipulate it
-                to make curve longer or shorter. Exciting!
-            <p>
-            <p>
-                But wait... how do we calculate where the intersection will happen? How do we find where it will touch
-                segments? And the most important question, how do we make circular arc out of splines?
-            </p>
-            <div>
-                <img src="./smooth-curves/gg-4.PNG">
-            </div>
-            <p>
-                We should notice a couple of things from this picture.
-            </p>
-            <p>
-                There's a right triangle which has a side of length w/2 (half of the road width). So if we knew what's
-                the angle opposite to that side, we could use trigonometry to find the distance between B and our
-                circular arc center.
-            </p>
-            <p>
-                Now we should notice that angles beta and gamma are cross angles which means they are identical. Angle
-                gamma is identical to the angle ABC since lines that form those two angles are parallel. And we know
-                coordinates of A, B and C, so we can calculate angle ABC
-            </p>
-            <p>
-                Lastly, there are at least two ways to prove that angle opposite to the side with length w/2 is beta/2.
-                Maybe I will show one of them sometimes
-            </p>
-            <p>
-                To calculate beta, we will use dot product
-                Find unit vectors 'u' (that points from B to A) and 'v' (that points from B to C). Their dot product is
-                cosine of an angle between them.
-                <i>TBD: show math</i>
-            </p>
-            <p>
-                When we know beta, everything boils down to basic trigonometry. If we call the distance between B and
-                center 'd' then: beta/2 = (w/2)/d => d = (w/2)/sin(beta/2)
-            </p>
-            <p>
-                Intersection will be at the distance of d. We need to find direction. Since u and v are unit vectors we
-                simply normalize sum vector of u and v and that. Since u and v are vectors that form identical angle to
-                angle ABC, that means that what we get will be half the angle of ABC. Just the angle we need
-            </p>
-            <p>
-                So to calculate coordinates of the intersection I
-                we do:
-                I = B+d*((u+v)/|u+v|)
-            </p>
-            <p>
-                Now, remember, this is not where we will put our center. We will add some variable length 'l' to the
-                length 'd', so we prevent self-intersecting mesh. We can later experiment with 'l' and see how it
-                affects our curve.
-            </p>
-            <p>
-                So our center R will be
-                R=B+(d+l)*((u+v)/|u+v|)
-            </p>
-            <p>
-                To find points where circular arc touches segments AB and BC we will again rely upon som trigonometry
-            </p>
-            <div>
-                <img src="./smooth-curves/gg-5.PNG">
-            </div>
-            <p>
-                This time we know that distance between B and D is (d+l) and we know that angle DBR is beta/2
-            </p>
-            <p>
-                We want to find coordinate of D by coordinates of B. You might think that you could also do it by
-                coordinates of R. But what happens when you do that? I will leave that as khm... exercise for a reader.
-            </p>
-            <p>
-                So, basic trigonometry:
-                BD = (beta/2)*(d+l)
-            </p>
-            <p>Which means that coordinate of D will be B+(beta/2)*(d+l)*u. Similarly you can find E that's the point
-                where our circular arc touches BC</p>
-            <div>
-                <img src="./smooth-curves/gg-6.PNG">
-            </div>
-            <p>We are almost there!</p>
-            <p>Now all there is left to do is add circular curve that spans from D to E and for that we have to
-                implement Bezier curves</p>
+    </div>
+    </p>
+    Nice! Mesh now follows pretty smooth curve, which is promising. But now it self-intersects. This is why, instead of
+    using rectangle intersection point as our arc center, we will add some length to it. When we finish our calculations
+    we can experiment with that length, or we can even allow player to manipulate it to make curve longer or shorter.
+    Exciting!
+    <p>
+    <p>
+        But wait... how do we calculate where the intersection will happen? How do we find where it will touch segments?
+        And the most important question, how do we make circular arc out of splines?
+    </p>
+    <hr>
+    <hr>
+    <div>
+        <img src="./smooth-curves/gg-4.PNG">
+    </div>
+    <p>
+        We should notice a couple of things from this picture.
+    </p>
+    <p>
+        There's a right triangle which has a side of length w/2 (half of the road width). So if we knew what's the angle
+        opposite to that side, we could use trigonometry to find the distance between B and our circular arc center.
+    </p>
+    <p>
+        Now we should notice that angles beta and gamma are cross angles which means they are identical. Angle gamma is
+        identical to the angle ABC since lines that form those two angles are parallel. And we know coordinates of A, B
+        and C, so we can calculate angle ABC
+    </p>
+    <p>
+        Lastly, there are at least two ways to prove that angle opposite to the side with length w/2 is beta/2. Maybe I
+        will show one of them sometimes
+    </p>
+    <p>
+        To calculate beta, we will use dot product
+        Find unit vectors 'u' (that points from B to A) and 'v' (that points from B to C). Their dot product is cosine
+        of an angle between them.
+        <i>TBD: show math</i>
+    </p>
+    <p>
+        When we know beta, everything boils down to basic trigonometry. If we call the distance between B and center 'd'
+        then: beta/2 = (w/2)/d => d = (w/2)/sin(beta/2)
+    </p>
+    <p>
+        Intersection will be at the distance of d. We need to find direction. Since u and v are unit vectors we simply
+        normalize sum vector of u and v and that. Since u and v are vectors that form identical angle to angle ABC, that
+        means that what we get will be half the angle of ABC. Just the angle we need
+    </p>
+    <p>
+        So to calculate coordinates of the intersection I
+        we do:
+        I = B+d*((u+v)/|u+v|)
+    </p>
+    <p>
+        Now, remember, this is not where we will put our center. We will add some variable length 'l' to the length 'd',
+        so we prevent self-intersecting mesh. We can later experiment with 'l' and see how it affects our curve.
+    </p>
+    <p>
+        So our center R will be
+        R=B+(d+l)*((u+v)/|u+v|)
+    </p>
+    <p>
+        To find points where circular arc touches segments AB and BC we will again rely upon som trigonometry
+    </p>
+    <div>
+        <img src="./smooth-curves/gg-5.PNG">
+    </div>
+    <p>
+        This time we know that distance between B and D is (d+l) and we know that angle DBR is beta/2
+    </p>
+    <p>
+        We want to find coordinate of D by coordinates of B. You might think that you could also do it by coordinates of
+        R. But what happens when you do that? I will leave that as khm... exercise for a reader.
+    </p>
+    <p>
+        So, basic trigonometry:
+        BD = (beta/2)*(d+l)
+    </p>
+    <p>Which means that coordinate of D will be B+(beta/2)*(d+l)*u. Similarly you can find E that's the point where our
+        circular arc touches BC</p>
+    <div>
+        <img src="./smooth-curves/gg-6.PNG">
+    </div>
+    <p>We are almost there!</p>
+    <p>Now all there is left to do is add circular curve that spans from D to E and for that we have to implement Bezier
+        curves</p>
+    <p>
+        Now allow me to pull this formula out of the thin air.
+    </p>
+    <p>
+        k = 4/3*tan(theta/4)
+    </p>
+    <p>
+        It's pretty useful formula and it calculates the distance between starting and ending point and control points
+        of a curve. This formula deserves a blog post of it's own, together with Bezier curves, so if you want to know
+        more there's a very good blog post
+        <a href="https://pomax.github.io/bezierinfo/#circles_cubic">here</a>
+    </p>
+    <p>
+        Now let's examine formula: k = 4/3*tan(theta/4)
+    </p>
+    <p>
+        As we already mentioned 'k' is the distance between starting point of a curve and it's out tangent control
+        point. And ending point of a curve and it's in tangent control point.
+    </p>
+    <p>
+        Direction of that distance are going to be given by vectors pointing from A to B and C to B.
+    </p>
+    <p>
+        But what is theta?
+    </p>
+    <p>
+        It's the angle between D and E where R is center of the angle.
+    </p>
+    <p>
+        But how do we calculate it?
+    </p>
+    <p>
+        There are at least two ways. One being dot product of unit vectors RD and RE. But can we make it simpler?
+    </p>
+    <div>
+        <img src="./smooth-curves/gg-7.PNG" />
+    </div>
+    <p>
+        If we do this it becomes obvious that whenever there's angle ERD, there is angle DRE that forms 360 degrees with
+        it.
+    </p>
+    <div>
+        <img src="./smooth-curves/gg-8.PNG">
+    </div>
+    <p>
+        Oh look! Line that goes through h and B is perpendicular to the line that goes through D and R. And line that
+        goes through E and B is perpendicular to a line that goes through R and E.
+    </p>
+    <p>
+        Which means that angles HBE and DRE are identical.
+    </p>
+    <p>
+        But angle HBE is our angle alpha, that we took in the beginning that points from B to C!
+    </p>
+    <p>
+        That means that angle ERD is 360 degrees - alpha
+    </p>
+    <p>Now we can find distance between starting and ending point and their respective control points</p>
+    <p>
+        theta = 360deg-alpha
+    </p>
+    <p>
+        k = 4/3*tan(theta/4)
+    </p>
+    <p>For the direction, let's say that there are unit vectors 'p' that points from A to B and 'q' that points form C
+        to B (remember - they are directed opposite to 'u' and 'v' respectively)</p>
+    <p>
+        And that's it:
+    </p>
+    <p>
+        F = D + p*k
+    </p>
+    <p>
+        G = D+ q*k
+    </p>
+    <div>
+        <img src="./smooth-curves/gg-9.PNG">
+    </div>
+    <p>
+        Now we have all the control points that we need to create Cubic Bezier curve. Now Bezier curves deserve a blog
+        post for themselves. There's extensive <a href="https://pomax.github.io/bezierinfo/">blog post by pomax</a> that
+        I already referred to in this post. But for our problem we don't need to read all of that. Until I do my blog
+        post about them here's the link to <a href="https://www.youtube.com/watch?v=pnYccz1Ha34"> great and sufficient
+            video explanation by Guidev</a>
+    </p>
+    <p>
+        For our current purpose we will use cubic curve formula:
+    </p>
+    <p>
+        (1-t)^(3) E+3 (1-t)^(2) t G+3 (1-t) t^(2) F+t^(3) D
+    </p>
+    <p>
+        where t is interpolation parameter.
+    </p>
+    <p>
+        And our curve is done!
+    </p>
+    <div>
+        <img src="./smooth-curves//gg-10.PNG">
+    </div>
+    <p>
+        If you like splitting hairs you will notice that our curve now happens before B. Which should've been expected,
+        because, to mix up terminologies, in point B our curve is in null space. What are the consequences, and how we
+        can solve problems that arise from that, is out of scope of this blog post.
+    </p>
+    <p>
+        Let's see how our curve will look in game engine, where extruder creates mesh around it:
+    </p>
+    <div>
+        <img src="./smooth-curves//gg-11.PNG" />
+        <img src="./smooth-curves/gg-12.PNG" />
+        </dv>
+        <p>😎</p>
+        <p>
+            It is worth noting that this method works perfectly well in both 2D and 3D. The differences arise in
+            calculating perpendicular vectors. And if you want to raise your road while curving it, for example on a
+            curvy bridge or overpass, you might have to work with Euler angles or Quaternions.
+        </p>
+        <p>But cubic Bezier curve will still be applicable</p>
+
+        <p>
+            We've done quite much with this curves, but we've barely scratched the surface.
+        </p>
+        <p>
+            If you've come so far and you've noticed mistakes, have suggestions or want to collaborate, please feel free
+            to reach me on<a href="https://www.linkedin.com/in/nemanja-mileti%C4%87-4209311a1">LinkedIn<a> or <a
+                        href="https://bsky.app/profile/sineseeker.bsky.social">BlueSky</a>
+        </p>
 </body>
 
 </html>
