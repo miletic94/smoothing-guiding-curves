@@ -97,6 +97,80 @@
                 But wait... how do we calculate where the intersection will happen? How do we find where it will touch
                 segments? And the most important question, how do we make circular arc out of splines?
             </p>
+            <div>
+                <img src="./smooth-curves/gg-4.PNG">
+            </div>
+            <p>
+                We should notice a couple of things from this picture.
+            </p>
+            <p>
+                There's a right triangle which has a side of length w/2 (half of the road width). So if we knew what's
+                the angle opposite to that side, we could use trigonometry to find the distance between B and our
+                circular arc center.
+            </p>
+            <p>
+                Now we should notice that angles beta and gamma are cross angles which means they are identical. Angle
+                gamma is identical to the angle ABC since lines that form those two angles are parallel. And we know
+                coordinates of A, B and C, so we can calculate angle ABC
+            </p>
+            <p>
+                Lastly, there are at least two ways to prove that angle opposite to the side with length w/2 is beta/2.
+                Maybe I will show one of them sometimes
+            </p>
+            <p>
+                To calculate beta, we will use dot product
+                Find unit vectors 'u' (that points from B to A) and 'v' (that points from B to C). Their dot product is
+                cosine of an angle between them.
+                <i>TBD: show math</i>
+            </p>
+            <p>
+                When we know beta, everything boils down to basic trigonometry. If we call the distance between B and
+                center 'd' then: beta/2 = (w/2)/d => d = (w/2)/sin(beta/2)
+            </p>
+            <p>
+                Intersection will be at the distance of d. We need to find direction. Since u and v are unit vectors we
+                simply normalize sum vector of u and v and that. Since u and v are vectors that form identical angle to
+                angle ABC, that means that what we get will be half the angle of ABC. Just the angle we need
+            </p>
+            <p>
+                So to calculate coordinates of the intersection I
+                we do:
+                I = B+d*((u+v)/|u+v|)
+            </p>
+            <p>
+                Now, remember, this is not where we will put our center. We will add some variable length 'l' to the
+                length 'd', so we prevent self-intersecting mesh. We can later experiment with 'l' and see how it
+                affects our curve.
+            </p>
+            <p>
+                So our center R will be
+                R=B+(d+l)*((u+v)/|u+v|)
+            </p>
+            <p>
+                To find points where circular arc touches segments AB and BC we will again rely upon som trigonometry
+            </p>
+            <div>
+                <img src="./smooth-curves/gg-5.PNG">
+            </div>
+            <p>
+                This time we know that distance between B and D is (d+l) and we know that angle DBR is beta/2
+            </p>
+            <p>
+                We want to find coordinate of D by coordinates of B. You might think that you could also do it by
+                coordinates of R. But what happens when you do that? I will leave that as khm... exercise for a reader.
+            </p>
+            <p>
+                So, basic trigonometry:
+                BD = (beta/2)*(d+l)
+            </p>
+            <p>Which means that coordinate of D will be B+(beta/2)*(d+l)*u. Similarly you can find E that's the point
+                where our circular arc touches BC</p>
+            <div>
+                <img src="./smooth-curves/gg-6.PNG">
+            </div>
+            <p>We are almost there!</p>
+            <p>Now all there is left to do is add circular curve that spans from D to E and for that we have to
+                implement Bezier curves</p>
 </body>
 
 </html>
